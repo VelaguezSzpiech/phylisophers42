@@ -1,52 +1,27 @@
-NAME    = philo
-CC      = cc
-CFLAGS  = -Wall -Wextra -Werror -Iinclude
-
-SRCDIR  = src
-OBJDIR  = obj
-
-SRC     = philo.c \
-          init/init_forks.c \
-          init/init_param.c \
-          init/init_philosopher.c \
-          routines/routine_eat.c \
-          routines/routine_fork.c \
-          routines/routine_handler.c \
-          routines/routine_sleep.c \
-          routines/routine_think.c \
-          monitor/monitor_handler.c \
-          monitor/monitor_check.c \
-          monitor/monitor_join_thread.c \
-          utils/utils_clean.c \
-          utils/utils_print.c \
-          utils/utils_time.c \
-          utils/utils_debug.c \
-          utils/utils_mutex_count_eat.c \
-          utils/utils_mutex_last_meal.c \
-          utils/utils_mutex_state_end.c \
-          lib/ft_atoll.c \
-          lib/ft_strlen.c \
-          lib/garbage_collector.c \
-          lib/is_int.c
-
-# Convert each .c file in SRC to a corresponding .o file in OBJDIR
-OBJ     = $(SRC:%.c=$(OBJDIR)/%.o)
+NAME = philo
+CC = gcc
+CFLAGS = -Wall -Wextra -Werror -I includes
+CCFLAGS = -pthread
+SRC_PATH = src
+SRC_FILES =	main.c			check_args.c		utilities.c			\
+			print_message.c	routine.c			philosopher_utils.c
+SRC = $(addprefix $(SRC_PATH)/, $(SRC_FILES))
+OBJ_FILES = $(SRC_FILES:%.c=%.o)
+OBJ = $(addprefix $(SRC_PATH)/, $(OBJ_FILES))
 
 all: $(NAME)
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) $^ -o $@
+	$(CC) $(CFLAGS) $(CCFLAGS) $^ -o $@
 
-# Compile each .c into .o inside OBJDIR
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(dir $@)
+$(SRC_PATH)/%.o: $(SRC_PATH)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(OBJ)
 
 fclean: clean
-	rm -f $(NAME)
+	rm -rf $(NAME)
 
 re: fclean all
 
