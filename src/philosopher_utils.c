@@ -6,71 +6,15 @@
 /*   By: vela <vela@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:44 by vela              #+#    #+#             */
-/*   Updated: 2025/01/05 22:42:13 by vela             ###   ########.fr       */
+/*   Updated: 2025/01/08 20:42:40 by vela             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
+#include <sys/time.h>  // <-- For gettimeofday
 
 /*
-** Continually checks if a philosopher has died or if everyone is full
-*/
-void	monitor_death(t_diningTable *table)
-{
-	int	i;
-
-	while (!table->is_full)
-	{
-		i = -1;
-		while (!table->dead && ++i < table->number_of_philosophers)
-		{
-			pthread_mutex_lock(&table->check_lock);
-			if (get_time() - table->philosophers[i].last_meal >
-				(size_t)table->time_to_die)
-			{
-				print_message(&table->philosophers[i], MESSAGE_DEAD);
-				table->dead = 1;
-			}
-			pthread_mutex_unlock(&table->check_lock);
-			usleep(100);
-		}
-		if (table->dead)
-			break ;
-		/*
-		** Check if all have eaten enough times (only if must_eat_count != -1)
-		*/
-		i = 0;
-		while (table->must_eat_count != -1 && i < table->number_of_philosophers
-			&& table->philosophers[i].times_eaten >= table->must_eat_count)
-			i++;
-		if (i == table->number_of_philosophers)
-			table->is_full = 1;
-	}
-}
-
-/*
-** Join threads, destroy mutexes, free memory
-*/
-void	clean_up(t_diningTable *table, pthread_t *threads)
-{
-	int	i;
-
-	i = -1;
-	while (++i < table->number_of_philosophers)
-		pthread_join(threads[i], NULL);
-
-	i = -1;
-	while (++i < table->number_of_philosophers)
-		pthread_mutex_destroy(&table->philosophers[i].fork_mutex);
-
-	pthread_mutex_destroy(&table->print_lock);
-	pthread_mutex_destroy(&table->check_lock);
-	free(table->philosophers);
-	free(threads);
-}
-
-/*
-** Get the current time in ms
+** Returns the current time in milliseconds
 */
 size_t	get_time(void)
 {
@@ -81,17 +25,40 @@ size_t	get_time(void)
 }
 
 /*
-** Sleep, but also check if someone died in the meantime
+** Sleeps in small increments until the desired duration has passed
+** or until the simulation is marked dead (table->dead == 1).
 */
 void	smart_sleep(t_diningTable *table, size_t duration)
 {
 	size_t	start;
+	size_t	now;
 
 	start = get_time();
 	while (!table->dead)
 	{
-		if (get_time() - start >= duration)
+		now = get_time();
+		if ((now - start) >= duration)
 			break ;
 		usleep(100);
 	}
+}
+
+/*
+** Clean-up function to join philosopher threads,
+** destroy mutexes, and free memory allocations
+*/
+void	clean_up(t_diningTable *table, pthread_t *threads)
+{
+	int	i;
+
+	i = -1;
+	while (++i < table->number_of_philosophers)
+		pthread_join(threads[i], NULL);
+	i = -1;
+	while (++i < table->number_of_philosophers)
+		pthread_mutex_destroy(&table->philosophers[i].fork_mutex);
+	pthread_mutex_destroy(&table->print_lock);
+	pthread_mutex_destroy(&table->check_lock);
+	free(table->philosophers);
+	free(threads);
 }

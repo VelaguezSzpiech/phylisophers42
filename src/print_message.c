@@ -6,15 +6,12 @@
 /*   By: vela <vela@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:51 by vela              #+#    #+#             */
-/*   Updated: 2025/01/05 22:42:18 by vela             ###   ########.fr       */
+/*   Updated: 2025/01/08 19:47:31 by vela             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-/*
-** Return the corresponding message string in English
-*/
 static char	*get_message_text(int message)
 {
 	if (message == MESSAGE_FORK)
@@ -30,9 +27,6 @@ static char	*get_message_text(int message)
 	return ("Error: not valid message ID");
 }
 
-/*
-** Print a message with proper locks
-*/
 void	print_message(t_philosopher *philosopher, int message)
 {
 	size_t	current_time;

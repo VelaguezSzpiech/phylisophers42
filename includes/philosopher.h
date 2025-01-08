@@ -6,7 +6,7 @@
 /*   By: vela <vela@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/05 21:33:53 by vela              #+#    #+#             */
-/*   Updated: 2025/01/05 22:42:40 by vela             ###   ########.fr       */
+/*   Updated: 2025/01/08 20:41:24 by vela             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@
 /*
 ** Renamed messages
 */
-enum e_message {
+enum e_message
+{
 	MESSAGE_FORK = 0,
 	MESSAGE_EATING,
 	MESSAGE_SLEEPING,
@@ -67,6 +68,8 @@ int		is_digit(int c);
 size_t	str_length(const char *s);
 int		str_ncmp(const char *s1, const char *s2, size_t n);
 int		str_to_int(const char *str);
+int		initialize_table(t_diningTable *table);
+void	monitor_death(t_diningTable *table);
 
 int		check_arguments(int argc, char *argv[], t_diningTable *table);
 void	print_message(t_philosopher *philosopher, int message);
