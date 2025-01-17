@@ -3,18 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   check_args.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vela <vela@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vszpiech <vszpiech@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/05 21:33:39 by vela              #+#    #+#             */
-/*   Updated: 2025/01/08 19:42:50 by vela             ###   ########.fr       */
+/*   Created: 2025/01/09 15:23:35 by vszpiech          #+#    #+#             */
+/*   Updated: 2025/01/17 13:07:57 by vszpiech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-/*
-** Verifies that each argument is a valid (non-negative) integer
-*/
 static int	validate_numeric_args(int argc, char *argv[])
 {
 	int	i;
@@ -57,9 +54,6 @@ static int	verify_overflow(char *s)
 	return (0);
 }
 
-/*
-** Validate all arguments for numeric correctness and overflow
-*/
 static int	all_args_valid(int argc, char *argv[])
 {
 	int	i;
@@ -75,9 +69,6 @@ static int	all_args_valid(int argc, char *argv[])
 	return (0);
 }
 
-/*
-** Public function to check arguments and populate the table structure
-*/
 int	check_arguments(int argc, char *argv[], t_diningTable *table)
 {
 	if (all_args_valid(argc, argv))
@@ -88,11 +79,13 @@ int	check_arguments(int argc, char *argv[], t_diningTable *table)
 	table->time_to_sleep = str_to_int(argv[4]);
 	table->must_eat_count = -1;
 	if (argc == 6)
-		table->must_eat_count = str_to_int(argv[5]);
-	if (table->number_of_philosophers <= 0 || table->time_to_die <= 0
-		|| table->time_to_eat <= 0 || table->time_to_sleep <= 0)
 	{
-		write(2, "Error! Invalid arguments (must not be zero)\n", 44);
+		table->must_eat_count = str_to_int(argv[5]);
+	}
+	if (table->number_of_philosophers <= 0 || table->time_to_die <= 0
+		|| table->time_to_eat <= 0 || table->time_to_sleep <= 0
+		|| table->must_eat_count == 0)
+	{
 		return (1);
 	}
 	if (initialize_table(table))

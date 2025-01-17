@@ -3,18 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   initialize.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vela <vela@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vszpiech <vszpiech@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/08 20:00:00 by vela              #+#    #+#             */
-/*   Updated: 2025/01/08 19:54:00 by vela             ###   ########.fr       */
+/*   Created: 2025/01/09 15:23:41 by vszpiech          #+#    #+#             */
+/*   Updated: 2025/01/17 13:08:28 by vszpiech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-/*
-** Allocate memory for philosophers and initialize the table
-*/
 static int	allocate_philosophers(t_diningTable *table)
 {
 	table->philosophers = (t_philosopher *)
@@ -29,9 +26,6 @@ static int	allocate_philosophers(t_diningTable *table)
 	return (0);
 }
 
-/*
-** Initialize philosopher's properties
-*/
 static void	init_philo(t_philosopher *philosopher, int id, t_diningTable *table)
 {
 	philosopher->id = id + 1;
@@ -40,9 +34,6 @@ static void	init_philo(t_philosopher *philosopher, int id, t_diningTable *table)
 	pthread_mutex_init(&philosopher->fork_mutex, NULL);
 }
 
-/*
-** Link philosophers in a circular list
-*/
 static void	link_philosophers(t_philosopher *philosophers, int count)
 {
 	int	i;
@@ -61,18 +52,12 @@ static void	link_philosophers(t_philosopher *philosophers, int count)
 	}
 }
 
-/*
-** Initialize mutex locks for the table
-*/
 static void	initialize_table_locks(t_diningTable *table)
 {
 	pthread_mutex_init(&table->print_lock, NULL);
 	pthread_mutex_init(&table->check_lock, NULL);
 }
 
-/*
-** Main initialization function
-*/
 int	initialize_table(t_diningTable *table)
 {
 	int	i;

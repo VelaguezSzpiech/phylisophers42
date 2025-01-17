@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vela <vela@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: vszpiech <vszpiech@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/05 21:33:46 by vela              #+#    #+#             */
-/*   Updated: 2025/01/08 19:45:38 by vela             ###   ########.fr       */
+/*   Created: 2025/01/09 15:23:49 by vszpiech          #+#    #+#             */
+/*   Updated: 2025/01/17 14:05:24 by vszpiech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,6 @@ static int	error_message(void)
 	return (1);
 }
 
-/*
-** Function to create threads for philosophers
-*/
 static int	create_threads(t_diningTable *table, pthread_t *threads)
 {
 	int	i;
@@ -28,8 +25,8 @@ static int	create_threads(t_diningTable *table, pthread_t *threads)
 	i = -1;
 	while (++i < table->number_of_philosophers)
 	{
-		if (pthread_create(&threads[i], NULL,
-				&routine, &table->philosophers[i]) != 0)
+		if (pthread_create(&threads[i], NULL, &philosopher_loop,
+				&table->philosophers[i]) != 0)
 		{
 			write(2, "Error! cannot create thread\n", 28);
 			while (--i >= 0)
@@ -45,39 +42,56 @@ static int	create_threads(t_diningTable *table, pthread_t *threads)
 	return (0);
 }
 
-/*
-** Function to initialize threads and start monitoring
-*/
-static int	initialize_simulation(t_diningTable *table)
+static void	print_completion_message(t_diningTable *table)
 {
-	pthread_t	*threads;
-
-	threads = (pthread_t *)malloc(table->number_of_philosophers
-			* sizeof(pthread_t));
-	if (!threads)
-	{
-		write(2, "Error! memory allocation failed\n", 31);
-		free(table->philosophers);
-		return (1);
-	}
-	table->start_time = get_time();
-	if (create_threads(table, threads) != 0)
-		return (1);
-	monitor_death(table);
-	clean_up(table, threads);
-	return (0);
+	pthread_mutex_lock(&table->print_lock);
+	printf("All philosophers have eaten at least %d times.\n",
+		table->must_eat_count);
+	pthread_mutex_unlock(&table->print_lock);
 }
 
-/*
-** Main function to handle argument parsing and simulation initialization
-*/
-int	main(int argc, char *argv[])
+int initialize_simulation(t_diningTable *table)
 {
-	t_diningTable	table;
+    // Allocate memory for philosopher threads
+    pthread_t *threads = (pthread_t *)malloc(table->number_of_philosophers * sizeof(pthread_t));
+    if (!threads)
+    {
+        fprintf(stderr, "Error: Could not allocate memory for threads.\n");
+        return 1;
+    }
 
-	if ((argc < 5 || argc > 6) || check_arguments(argc, argv, &table))
-		return (error_message());
-	if (initialize_simulation(&table) != 0)
-		return (1);
-	return (0);
+    // Record the start time for the simulation
+    table->start_time = get_time();
+
+    // Create philosopher threads; if something fails, clean up and return
+    if (create_threads(table, threads) != 0)
+    {
+        free(threads);
+        return 1;
+    }
+
+    // Monitor for starvation and track whether all philosophers have eaten
+    monitor_death(table);
+
+    // If all philosophers ate at least must_eat_count times, print the completion message
+    if (table->is_full && !table->dead)
+        print_completion_message(table);
+
+    // Join threads, destroy mutexes, and free the allocated memory
+    clean_up(table, threads);
+
+    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    t_diningTable table;
+
+    if ((argc < 5 || argc > 6) || check_arguments(argc, argv, &table))
+        return (error_message());
+
+    if (initialize_simulation(&table) != 0)
+        return (1);
+
+    return (0);
 }
