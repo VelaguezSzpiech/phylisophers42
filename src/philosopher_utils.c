@@ -6,7 +6,7 @@
 /*   By: vszpiech <vszpiech@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 15:23:59 by vszpiech          #+#    #+#             */
-/*   Updated: 2025/01/17 14:18:42 by vszpiech         ###   ########.fr       */
+/*   Updated: 2025/01/17 14:49:19 by vszpiech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,11 +43,13 @@ void	clean_up(t_diningTable *table, pthread_t *threads)
 {
 	int	i;
 
-	for (i = 0; i < table->number_of_philosophers; i++)
+	i = -1;
+	while (++i < table->number_of_philosophers)
 	{
 		pthread_join(threads[i], NULL);
 	}
-	for (i = 0; i < table->number_of_philosophers; i++)
+	i = -1;
+	while (++i < table->number_of_philosophers)
 	{
 		pthread_mutex_destroy(&table->philosophers[i].fork_mutex);
 	}

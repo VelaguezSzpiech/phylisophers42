@@ -6,7 +6,7 @@
 /*   By: vszpiech <vszpiech@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 15:24:04 by vszpiech          #+#    #+#             */
-/*   Updated: 2025/01/17 14:18:32 by vszpiech         ###   ########.fr       */
+/*   Updated: 2025/01/17 14:27:47 by vszpiech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ void	print_message(t_philosopher *philosopher, int message)
 
 	current_time = get_time() - philosopher->table->start_time;
 	pthread_mutex_lock(&philosopher->table->print_lock);
-	is_dead = atomic_load(&philosopher->table->dead);
-	is_full = atomic_load(&philosopher->table->is_full);
+	is_dead = philosopher->table->dead;
+	is_full = philosopher->table->is_full;
 	if (!is_dead && !is_full)
 	{
 		printf("%zu %d %s\n", current_time, philosopher->id,

@@ -6,27 +6,27 @@
 /*   By: vszpiech <vszpiech@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 15:23:55 by vszpiech          #+#    #+#             */
-/*   Updated: 2025/01/17 14:18:47 by vszpiech         ###   ########.fr       */
+/*   Updated: 2025/01/17 14:48:14 by vszpiech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-int check_philosopher_death(t_philosopher *philosopher)
+int	check_philosopher_death(t_philosopher *philosopher)
 {
-    t_diningTable *table = philosopher->table;
-    pthread_mutex_lock(&table->check_lock);
+	t_diningTable	*table;
 
-    if (get_time() - philosopher->last_meal > (size_t)table->time_to_die)
-    {
-        table->dead = 1;
-        print_message(philosopher, MESSAGE_DEAD);
-        pthread_mutex_unlock(&table->check_lock);
-        return 1;
-    }
-
-    pthread_mutex_unlock(&table->check_lock);
-    return 0;
+	table = philosopher->table;
+	pthread_mutex_lock(&table->check_lock);
+	if (get_time() - philosopher->last_meal > (size_t)table->time_to_die)
+	{
+		table->dead = 1;
+		print_message(philosopher, MESSAGE_DEAD);
+		pthread_mutex_unlock(&table->check_lock);
+		return (1);
+	}
+	pthread_mutex_unlock(&table->check_lock);
+	return (0);
 }
 
 static int	check_philosophers_full(t_diningTable *table)

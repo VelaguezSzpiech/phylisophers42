@@ -1,7 +1,7 @@
 NAME = philo
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I includes 
-#CCFLAGS = -pthread
+CFLAGS = -Wall -Wextra -Werror -I includes -fsanitize=thread
+CCFLAGS = -pthread
 SRC_PATH = src
 SRC_FILES =	main.c			check_args.c		utilities.c			\
 			print_message.c	routine.c			philosopher_utils.c initialize.c monitor.c
