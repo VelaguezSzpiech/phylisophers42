@@ -6,7 +6,7 @@
 /*   By: vszpiech <vszpiech@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 15:23:55 by vszpiech          #+#    #+#             */
-/*   Updated: 2025/01/17 14:03:14 by vszpiech         ###   ########.fr       */
+/*   Updated: 2025/01/17 14:18:47 by vszpiech         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int check_philosopher_death(t_philosopher *philosopher)
 
     if (get_time() - philosopher->last_meal > (size_t)table->time_to_die)
     {
-        table->dead = 1; // Write also under the mutex
+        table->dead = 1;
         print_message(philosopher, MESSAGE_DEAD);
         pthread_mutex_unlock(&table->check_lock);
         return 1;
