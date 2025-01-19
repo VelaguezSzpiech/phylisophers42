@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 15:23:55 by vszpiech          #+#    #+#             */
-/*   Updated: 2025/01/19 15:43:50 by marvin           ###   ########.fr       */
+/*   Updated: 2025/01/19 15:57:39 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,6 @@ void    monitor_death(t_diningTable *table)
             if (all_ate_enough)
                 return;
         }
-        usleep(100);
+        usleep(1000);
     }
 }
