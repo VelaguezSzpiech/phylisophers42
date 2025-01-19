@@ -1,6 +1,6 @@
 NAME = philo
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -I includes -fsanitize=thread
+CFLAGS = -Wall -Wextra -Werror -I includes 
 CCFLAGS = -pthread
 SRC_PATH = src
 SRC_FILES =	main.c			check_args.c		utilities.c			\

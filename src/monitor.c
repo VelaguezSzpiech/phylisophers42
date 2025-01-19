@@ -3,73 +3,71 @@
 /*                                                        :::      ::::::::   */
 /*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: vszpiech <vszpiech@student.42.fr>          +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/09 15:23:55 by vszpiech          #+#    #+#             */
-/*   Updated: 2025/01/17 14:48:14 by vszpiech         ###   ########.fr       */
+/*   Updated: 2025/01/19 15:43:50 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosopher.h"
 
-int	check_philosopher_death(t_philosopher *philosopher)
+int check_philosopher_death(t_philosopher *philosopher)
 {
-	t_diningTable	*table;
+    t_diningTable    *table;
+    size_t           current_time;
+    size_t           last_meal_time;
 
-	table = philosopher->table;
-	pthread_mutex_lock(&table->check_lock);
-	if (get_time() - philosopher->last_meal > (size_t)table->time_to_die)
-	{
-		table->dead = 1;
-		print_message(philosopher, MESSAGE_DEAD);
-		pthread_mutex_unlock(&table->check_lock);
-		return (1);
-	}
-	pthread_mutex_unlock(&table->check_lock);
-	return (0);
+    table = philosopher->table;
+    pthread_mutex_lock(&table->check_lock);
+    current_time = get_time();
+    last_meal_time = philosopher->last_meal;
+    if (current_time - last_meal_time > (size_t)table->time_to_die && !table->dead)
+    {
+        table->dead = 1;
+        pthread_mutex_unlock(&table->check_lock);
+        print_message(philosopher, MESSAGE_DEAD);
+        return (1);
+    }
+    pthread_mutex_unlock(&table->check_lock);
+    return (0);
 }
 
-static int	check_philosophers_full(t_diningTable *table)
+
+
+void    monitor_death(t_diningTable *table)
 {
-	int	i;
+    int    i;
+    int    all_ate_enough;
 
-	if (table->must_eat_count == -1)
-		return (0);
-	i = 0;
-	pthread_mutex_lock(&table->check_lock);
-	if (table->is_full)
-	{
-		pthread_mutex_unlock(&table->check_lock);
-		return (1);
-	}
-	while (i < table->number_of_philosophers)
-	{
-		if (table->philosophers[i].times_eaten < table->must_eat_count)
-		{
-			pthread_mutex_unlock(&table->check_lock);
-			return (0);
-		}
-		i++;
-	}
-	table->is_full = 1;
-	pthread_mutex_unlock(&table->check_lock);
-	return (1);
-}
-
-void	monitor_death(t_diningTable *table)
-{
-	int	i;
-
-	while (!table->is_full && !table->dead)
-	{
-		i = -1;
-		while (++i < table->number_of_philosophers && !table->dead)
-		{
-			if (check_philosopher_death(&table->philosophers[i]))
-				return ;
-		}
-		if (check_philosophers_full(table))
-			return ;
-		usleep(100);
-	}
+    while (1)
+    {
+        i = -1;
+        while (++i < table->number_of_philosophers)
+        {
+            if (check_philosopher_death(&table->philosophers[i]))
+                return;
+        }
+        
+        if (table->must_eat_count != -1)
+        {
+            all_ate_enough = 1;
+            pthread_mutex_lock(&table->check_lock);
+            i = -1;
+            while (++i < table->number_of_philosophers)
+            {
+                if (table->philosophers[i].times_eaten < table->must_eat_count)
+                {
+                    all_ate_enough = 0;
+                    break;
+                }
+            }
+            if (all_ate_enough)
+                table->is_full = 1;
+            pthread_mutex_unlock(&table->check_lock);
+            if (all_ate_enough)
+                return;
+        }
+        usleep(100);
+    }
 }

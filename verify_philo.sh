@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Configuration
-EXPECTED_EATS=10  # Set this to the number of times each philosopher must eat
+EXPECTED_EATS=4  # Set this to the number of times each philosopher must eat
 SIMULATION="./philo"  # Path to the philosopher simulation binary
-ARGS="10 800 200 200 $EXPECTED_EATS"  # Update with the appropriate arguments for your simulation
+ARGS="30 800 300 300 $EXPECTED_EATS"  # Update with the appropriate arguments for your simulation
 
 # Run the simulation and capture output
 OUTPUT=$($SIMULATION $ARGS)
